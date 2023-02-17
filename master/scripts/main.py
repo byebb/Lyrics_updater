@@ -42,7 +42,7 @@ try:
                         config, configAll["groupConfigs7"], inputText)
         except ValueError as err:
             print(err)
-    print("Generation Succesful. This window can be closed")
+    print("Generation Successful. This window can be closed")
 except ValueError as err:
-    print("Exception occured: check following text:")
+    print("Exception occurred: check following text:")
     print(err)

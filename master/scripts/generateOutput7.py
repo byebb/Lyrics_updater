@@ -138,7 +138,7 @@ def CreateSlide(config, presentation, text, caption):
         #add text element
         textElement = copy.deepcopy(config["textElement7"])
         textElement.element.uuid.string = str(uuid.uuid4())
-        rftText = config["textStyle7"] + myText[1] + "}"
+        rftText = config["textStyle7"] + myText[1].upper() + "}"
         textElement.element.text.rtf_data = rftText
         slide.actions[0].slide.presentation.base_slide.elements.append(
             textElement)
