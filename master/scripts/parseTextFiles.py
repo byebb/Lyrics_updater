@@ -164,7 +164,7 @@ def ParseTextFile(directory, file, groupConfig):
     output["name"] = unicodedata.normalize("NFC", file).replace(".txt", "")
     output["languages"] = []
     # remove trailing newlines
-    originalInput = originalInput.rstrip("\n")
+    originalInput = originalInput.replace("\r","").rstrip("\n")
     # split file into segments. One for each language and one for the arragements
     input = originalInput.split("\n\n\n")
     # parse first language

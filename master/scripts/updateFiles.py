@@ -146,7 +146,7 @@ def ParseGroup(input, position, output, groupConfig, startingLine):
         if input[position + 1] != "":
             raise ScriptException(
                 "EmptyLineError", "line: {0}".format(startingLine + 1),
-                "An empty line was expected after group '{0}' but not found.".
+                "An empty line was expected after group '{0}' but not found [149].".
                 format(output["name"]))
         else:
             i = position + 2
@@ -164,11 +164,12 @@ def ParseLanguage(input, groupConfig, startingLine):
     input = input.split("\n")
     language["name"] = input[0]
     language["groups"] = {}
+    print(input)
     # check for empty line after language name
     if input[1] != "":
         raise ScriptException(
             "EmptyLineError", "line: {0}".format(startingLine + 1),
-            "An empty line was expected after language '{0}' but not found.".
+            "An empty line was expected after language '{0}' but not found [171].".
             format(language["name"]))
     i = 2
     # loop over all input data and parse groups
@@ -185,7 +186,7 @@ def ParseArrangement(input, position, output, groupConfig, startingLine):
     if input[position + 1] != "":
         raise ScriptException(
             "EmptyLineError", "line: {0}".format(startingLine + 1),
-            "An empty line was expected after arrangement '{0}' but not found."
+            "An empty line was expected after arrangement '{0}' but not found [188]."
             .format(arrangement["name"]))
     else:
         i = position + 2
@@ -217,7 +218,7 @@ def ParseArrangements(input, groupConfig, startingLine):
     elif splitInput[1] != "":
         raise ScriptException(
             "EmptyLineError", "line: {0}".format(startingLine + 1),
-            "An empty line was expected after KeyWord 'Arrangements' but not found."
+            "An empty line was expected after KeyWord 'Arrangements' but not found [220]."
         )
     else:
         i = 2
@@ -296,7 +297,7 @@ def ParseTextFile(directory, file, groupConfig):
     # remove trailing newlines
     originalInput = originalInput.rstrip("\n")
     # split file into segments. One for each language and one for the arragements
-    input = originalInput.split("\n\n\n")
+    input = originalInput.replace("\r","").split("\n\n\n")
     # parse first language
     output["languages"].append(ParseLanguage(input[0], groupConfig, 1))
     # parse second language if available

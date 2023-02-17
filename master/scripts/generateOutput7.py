@@ -46,6 +46,29 @@ def ReplaceSpecialCharacters(text):
     return output
 
 
+def ReplaceSpecialCharactersUPPER(text):
+    output = copy.deepcopy(text)
+    for i in range(0, len(output)):
+        # Ä
+        output[i] = output[i].replace(u'\u00c4', "\\'c4")
+        # Ö
+        output[i] = output[i].replace(u'\u00d6', "\\'d6")
+        # Ü
+        output[i] = output[i].replace(u'\u00dc', "\\'dc")
+        # ä
+        output[i] = output[i].replace(u'\u00e4', "\\'c4")
+        # ö
+        output[i] = output[i].replace(u'\u00f6', "\\'d6")
+        # ü
+        output[i] = output[i].replace(u'\u00fc', "\\'dc")
+        # ß
+        output[i] = output[i].replace(u'\u00df', "ss")
+        # ’
+        output[i] = output[i].replace(u'\u2019', "\\'27")
+        output[i] = output[i].encode()
+    return output
+
+
 def CreateSlide(config, presentation, text, caption):
     slide = copy.deepcopy(config["slide7"])
     #update uuid
@@ -56,6 +79,8 @@ def CreateSlide(config, presentation, text, caption):
     slide.actions[0].slide.presentation.base_slide.uuid.string = str(
         uuid.uuid4())
     myText = ReplaceSpecialCharacters(text)
+    myText = ReplaceSpecialCharactersUPPER(text) # IN CASE WE NEED IT UPPERCASE
+
     #create notes
     notes = config["notesRTF7"] + myText[0]
     if (False == config["singleLine7"]) and (len(myText) == 2):
@@ -63,11 +88,13 @@ def CreateSlide(config, presentation, text, caption):
     notes += "}"
     slide.actions[0].slide.presentation.notes.rtf_data = notes
     #add text element
+    print(myText[0])
+    print(myText[0].upper())
     textElement = copy.deepcopy(config["textElement7"])
     textElement.element.uuid.string = str(uuid.uuid4())
-    rftText = config["textStyle7"] + myText[0]
+    rftText = config["textStyle7"] + myText[0].upper()
     if (False == config["singleLine7"]) and (len(myText) == 2):
-        rftText += config["textStyleSecond7"] + myText[1]
+        rftText += config["textStyleSecond7"] + myText[1].upper()
     rftText += "}"
     textElement.element.text.rtf_data = rftText
     slide.actions[0].slide.presentation.base_slide.elements.append(textElement)
