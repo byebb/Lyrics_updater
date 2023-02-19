@@ -22,10 +22,9 @@ def ParseMasterConfigPro6(config_manager):
     config_manager["groupConfigs"] = {}
     __file = __file__.decode(sys.getfilesystemencoding())
     dirname = os.path.dirname(os.path.abspath(__file))
-    folder = u"..\\masterConfig_Groups.pro6"
-    root = os.path.join(dirname, folder)
+    parent_parent_dir = os.path.abspath(os.path.join(os.path.join(dirname, os.pardir), os.pardir))
     try:
-        tree = ET.parse(root)
+        tree = ET.parse(os.path.join(parent_parent_dir, "config", "masterConfig_Groups.pro6"))
     except:
         raise ValueError(
             'Error: "masterConfig_Groups.pro6" was not found in master directory')
@@ -43,10 +42,9 @@ def ParseMasterConfigPro7(config_manager):
     print('Parsing "masterConfig_Groups.pro"')
     __file = __file__.decode(sys.getfilesystemencoding())
     dirname = os.path.dirname(os.path.abspath(__file))
-    folder = u"..\\masterConfig_Groups.pro"
-    root = os.path.join(dirname, folder)
+    parent_parent_dir = os.path.abspath(os.path.join(os.path.join(dirname, os.pardir), os.pardir))
     presentation = presentation_pb2.Presentation()
-    f = open(root, "rb")
+    f = open(os.path.join(parent_parent_dir, "config", "masterConfig_Groups.pro"), "rb")
     presentation.ParseFromString(f.read())
     f.close()
 
