@@ -27,7 +27,7 @@ def ParseMasterConfigPro6(config_manager):
         tree = ET.parse(os.path.join(parent_parent_dir, "config", "masterConfig_Groups.pro6"))
     except:
         raise ValueError(
-            'Error: "masterConfig_Groups.pro6" was not found in master directory')
+            'Error: "masterConfig_Groups.pro6" was not found in config directory')
     groups = tree.find("array[@rvXMLIvarName='groups']")
 
     for group in groups:
