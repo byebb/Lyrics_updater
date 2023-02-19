@@ -1814,9 +1814,9 @@ def ParseEnum(field, value):
                        (enum_descriptor.full_name, value))
   else:
     # Numeric value.
-    if hasattr(field.file, 'syntax'):
+    if hasattr(field.filepath, 'syntax'):
       # Attribute is checked for compatibility.
-      if field.file.syntax == 'proto3':
+      if field.filepath.syntax == 'proto3':
         # Proto3 accept numeric unknown enums.
         return number
     enum_value = enum_descriptor.values_by_number.get(number, None)

@@ -4,8 +4,7 @@ import os
 import re
 import base64
 import sys
-import presentation_pb2
-import basicTypes_pb2
+from scripts.pp7_pb2 import presentation_pb2
 
 
 def ParseConfigFiles(configAll):

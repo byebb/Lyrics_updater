@@ -1,8 +1,7 @@
 # -- coding: utf-8 --
 
 import uuid
-import basicTypes_pb2
-import presentation_pb2
+from scripts.pp7_pb2 import basicTypes_pb2, presentation_pb2
 import os
 import copy
 

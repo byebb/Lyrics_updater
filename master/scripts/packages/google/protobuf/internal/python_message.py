@@ -791,9 +791,9 @@ def _AddPropertiesForExtensions(descriptor, cls):
 
   # TODO(amauryfa): Migrate all users of these attributes to functions like
   #   pool.FindExtensionByNumber(descriptor).
-  if descriptor.file is not None:
+  if descriptor.filepath is not None:
     # TODO(amauryfa): Use cls.MESSAGE_FACTORY.pool when available.
-    pool = descriptor.file.pool
+    pool = descriptor.filepath.pool
     cls._extensions_by_number = pool._extensions_by_number[descriptor]
     cls._extensions_by_name = pool._extensions_by_name[descriptor]
 
@@ -803,7 +803,7 @@ def _AddStaticMethods(cls):
     extension_handle.containing_type = cls.DESCRIPTOR
     # TODO(amauryfa): Use cls.MESSAGE_FACTORY.pool when available.
     # pylint: disable=protected-access
-    cls.DESCRIPTOR.file.pool._AddExtensionDescriptor(extension_handle)
+    cls.DESCRIPTOR.filepath.pool._AddExtensionDescriptor(extension_handle)
     _AttachFieldHelpers(cls, extension_handle)
   cls.RegisterExtension = staticmethod(RegisterExtension)
 

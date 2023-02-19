@@ -171,9 +171,9 @@ class DescriptorPool(object):
       if desc_name in register:
         old_desc = register[desc_name]
         if isinstance(old_desc, descriptor.EnumValueDescriptor):
-          old_file = old_desc.type.file.name
+          old_file = old_desc.type.filepath.name
         else:
-          old_file = old_desc.file.name
+          old_file = old_desc.filepath.name
 
         if not isinstance(desc, descriptor_type) or (
             old_file != file_name):
@@ -458,22 +458,22 @@ class DescriptorPool(object):
       KeyError: if the file cannot be found in the pool.
     """
     try:
-      return self._descriptors[symbol].file
+      return self._descriptors[symbol].filepath
     except KeyError:
       pass
 
     try:
-      return self._enum_descriptors[symbol].file
+      return self._enum_descriptors[symbol].filepath
     except KeyError:
       pass
 
     try:
-      return self._service_descriptors[symbol].file
+      return self._service_descriptors[symbol].filepath
     except KeyError:
       pass
 
     try:
-      return self._top_enum_values[symbol].type.file
+      return self._top_enum_values[symbol].type.filepath
     except KeyError:
       pass
 
@@ -489,7 +489,7 @@ class DescriptorPool(object):
       assert (sub_name in message.extensions_by_name or
               sub_name in message.fields_by_name or
               sub_name in message.enum_values_by_name)
-      return message.file
+      return message.filepath
     except (KeyError, AssertionError):
       raise KeyError('Cannot find a file containing %s' % symbol)
 

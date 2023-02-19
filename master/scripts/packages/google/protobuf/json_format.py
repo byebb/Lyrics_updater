@@ -292,7 +292,7 @@ class _Printer(object):
       if enum_value is not None:
         return enum_value.name
       else:
-        if field.file.syntax == 'proto3':
+        if field.filepath.syntax == 'proto3':
           return value
         raise SerializeToJsonError('Enum field contains an integer value '
                                    'which can not mapped to an enum value.')
@@ -384,7 +384,7 @@ class _Printer(object):
 
 
 def _IsWrapperMessage(message_descriptor):
-  return message_descriptor.file.name == 'google/protobuf/wrappers.proto'
+  return message_descriptor.filepath.name == 'google/protobuf/wrappers.proto'
 
 
 def _DuplicateChecker(js):
@@ -753,7 +753,7 @@ def _ConvertScalarFieldValue(value, field, require_str=False):
         raise ParseError('Invalid enum value {0} for enum type {1}.'.format(
             value, field.enum_type.full_name))
       if enum_value is None:
-        if field.file.syntax == 'proto3':
+        if field.filepath.syntax == 'proto3':
           # Proto3 accepts unknown enums.
           return number
         raise ParseError('Invalid enum value {0} for enum type {1}.'.format(
