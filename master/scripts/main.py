@@ -1,6 +1,6 @@
 # -- coding: utf-8 --
 import sys
-import parseConfigFiles as config
+import parseConfigFiles as Config
 import parseTextFiles as text
 import generateOutput as output
 import generateOutput7 as output7
@@ -13,7 +13,7 @@ import unicodedata
 configAll = {}
 try:
     # Parse all configuration files and add their data to configAll
-    config.ParseConfigFiles(configAll)
+    Config.ParseConfigFiles(configAll)
 
     # Get the directory path for the folder containing the text files
     # loop over all files in master
@@ -48,14 +48,14 @@ try:
                     root, filepath, configAll["groupConfigs"])
 
                 # Loop over each configuration and generate output files
-                for config in configAll["fileConfigs"]:
+                for Config in configAll["fileConfigs"]:
                     output.CreateOutputs(
-                        config, configAll["groupConfigs"], inputText)
+                        Config, configAll["groupConfigs"], inputText)
 
                 # Loop over each configuration from pro7 and generate output files
-                for config in configAll["fileConfigs7"]:
+                for Config in configAll["fileConfigs7"]:
                     output7.CreateOutputs(
-                        config, configAll["groupConfigs7"], inputText)
+                        Config, configAll["groupConfigs7"], inputText)
 
         # If an error occurs, print the error message
         except ValueError as err:

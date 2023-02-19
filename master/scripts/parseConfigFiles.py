@@ -7,12 +7,12 @@ import sys
 from scripts.pp7_pb2 import presentation_pb2
 
 
-def ParseConfigFiles(configAll):
-    ParseMasterConfigPro6(configAll)
-    ParseMasterConfigPro7(configAll)
-    ParseConfigFilesPro6(configAll)
-    ParseConfigFilesPro7(configAll)
-    if (len(configAll["fileConfigs"]) == 0) and (len(configAll["fileConfigs7"]) == 0):
+def ParseConfigFiles(config_manager):
+    ParseMasterConfigPro6(config_manager)
+    ParseMasterConfigPro7(config_manager)
+    ParseConfigFilesPro6(config_manager)
+    ParseConfigFilesPro7(config_manager)
+    if (len(config_manager["fileConfigs"]) == 0) and (len(config_manager["fileConfigs7"]) == 0):
         raise ValueError(
             'Error: No configuration file was found in sub folders')
 

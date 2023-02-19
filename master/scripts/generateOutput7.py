@@ -6,6 +6,8 @@ import os
 import copy
 
 
+# We need a function that converts UTF-8 codes of vowel mutations in the German language correctly.
+# Otherwise, we have a lot of gibberish in PP7 output files...
 def ReplaceSpecialCharacters(text):
     output = copy.deepcopy(text)
     for i in range(0, len(output)):
@@ -60,8 +62,8 @@ def ReplaceSpecialCharactersUPPER(text):
         output[i] = output[i].replace(u'\u00f6', "\\'d6")
         # ü
         output[i] = output[i].replace(u'\u00fc', "\\'dc")
-        # ß
-        output[i] = output[i].replace(u'\u00df', "ss")
+        # ß --> ss/SS doesn matter, since we apply .upper() anyway, only not working for utf8 codes
+        output[i] = output[i].replace(u'\u00df', "SS")
         # ’
         output[i] = output[i].replace(u'\u2019', "\\'27")
         output[i] = output[i].encode()
@@ -70,141 +72,157 @@ def ReplaceSpecialCharactersUPPER(text):
 
 def CreateSlide(config, presentation, text, caption):
     slide = copy.deepcopy(config["slide7"])
-    #update uuid
-    slideUuid = []
-    slideUuid.append(str(uuid.uuid4()))
-    slide.uuid.string = slideUuid[0]
-    slide.actions[0].uuid.string = str(uuid.uuid4())
-    slide.actions[0].slide.presentation.base_slide.uuid.string = str(
-        uuid.uuid4())
-    myText = ReplaceSpecialCharacters(text)
-    myText = ReplaceSpecialCharactersUPPER(text) # IN CASE WE NEED IT UPPERCASE
 
-    #create notes
-    notes = config["notesRTF7"] + myText[0]
-    if (False == config["singleLine7"]) and (len(myText) == 2):
-        notes += config["notesSecondRTF7"] + myText[1]
+    # update uuid
+    slide_uuid = [str(uuid.uuid4())]
+    slide.uuid.string = slide_uuid[0]
+    slide.actions[0].uuid.string = str(uuid.uuid4())
+    slide.actions[0].slide.presentation.base_slide.uuid.string = str(uuid.uuid4())
+
+    my_text = ReplaceSpecialCharacters(text)
+
+    # IN CASE WE NEED IT UPPERCASE
+    my_text = ReplaceSpecialCharactersUPPER(text)
+
+    # create notes
+    notes = config["notesRTF7"] + my_text[0]
+    if (False == config["singleLine7"]) and (len(my_text) == 2):
+        notes += config["notesSecondRTF7"] + my_text[1]
     notes += "}"
     slide.actions[0].slide.presentation.notes.rtf_data = notes
-    #add text element
-    print(myText[0])
-    print(myText[0].upper())
-    textElement = copy.deepcopy(config["textElement7"])
-    textElement.element.uuid.string = str(uuid.uuid4())
-    rftText = config["textStyle7"] + myText[0].upper()
-    if (False == config["singleLine7"]) and (len(myText) == 2):
-        rftText += config["textStyleSecond7"] + myText[1].upper()
-    rftText += "}"
-    textElement.element.text.rtf_data = rftText
-    slide.actions[0].slide.presentation.base_slide.elements.append(textElement)
-    #add caption element
-    if "captionElement7" in config and caption != None:
-        myCaption = ReplaceSpecialCharacters(caption)
-        captionElement = copy.deepcopy(config["captionElement7"])
-        captionElement.element.uuid.string = str(uuid.uuid4())
-        rftCaption = config["captionStyle7"] + myCaption[0]
-        if (False == config["singleLine7"]) and (len(myCaption) == 2):
-            rftCaption += config["captionStyleSecond7"] + myCaption[1]
-        rftCaption += "}"
-        captionElement.element.text.rtf_data = rftCaption
+
+    # add text element
+    # print(my_text[0])
+    print("[LYR] " + my_text[0].upper())
+
+    text_element = copy.deepcopy(config["textElement7"])
+    text_element.element.uuid.string = str(uuid.uuid4())
+    rft_text = config["textStyle7"] + my_text[0].upper()
+    if (False == config["singleLine7"]) and (len(my_text) == 2):
+        rft_text += config["textStyleSecond7"] + my_text[1].upper()
+    rft_text += "}"
+    text_element.element.text.rtf_data = rft_text
+    slide.actions[0].slide.presentation.base_slide.elements.append(text_element)
+
+    # add caption element
+    if "captionElement7" in config and caption is not None:
+        my_caption = ReplaceSpecialCharacters(caption)
+
+        print ("[CAP] " + ", ".join(my_caption))
+
+        caption_element = copy.deepcopy(config["captionElement7"])
+        caption_element.element.uuid.string = str(uuid.uuid4())
+        rft_caption = config["captionStyle7"] + my_caption[0]
+        if (config["singleLine7"] == False) and (len(my_caption) == 2):
+            rft_caption += config["captionStyleSecond7"] + my_caption[1]
+        rft_caption += "}"
+        caption_element.element.text.rtf_data = rft_caption
         slide.actions[0].slide.presentation.base_slide.elements.append(
-            captionElement)
-    #add lower shape element
+            caption_element)
+
+    # add lower shape element
     if "lowerShapeElement7" in config:
-        lowerShape = copy.deepcopy(config["lowerShapeElement7"])
-        lowerShape.element.uuid.string = str(uuid.uuid4())
+        lower_shape = copy.deepcopy(config["lowerShapeElement7"])
+        lower_shape.element.uuid.string = str(uuid.uuid4())
         slide.actions[0].slide.presentation.base_slide.elements.append(
-            lowerShape)
-    #add upper shape element
+            lower_shape)
+
+    # add upper shape element
     if ("upperShapeElement7" in config) and (False == config["singleLine7"]) and (len(text) == 2):
-        upperShape = copy.deepcopy(config["upperShapeElement7"])
-        upperShape.element.uuid.string = str(uuid.uuid4())
+        upper_shape = copy.deepcopy(config["upperShapeElement7"])
+        upper_shape.element.uuid.string = str(uuid.uuid4())
         slide.actions[0].slide.presentation.base_slide.elements.append(
-            upperShape)
+            upper_shape)
     presentation.cues.append(slide)
-    #create second slide in case single line is true
+
+    # create second slide in case single line is true
     if (True == config["singleLine7"]) and (len(text) == 2):
         slide = copy.deepcopy(config["slide7"])
-        #update uuid
-        slideUuid.append(str(uuid.uuid4()))
-        slide.uuid.string = slideUuid[1]
+        # update uuid
+        slide_uuid.append(str(uuid.uuid4()))
+        slide.uuid.string = slide_uuid[1]
         slide.actions[0].uuid.string = str(uuid.uuid4())
         slide.actions[0].slide.presentation.base_slide.uuid.string = str(
             uuid.uuid4())
-        #create notes
-        notes = config["notesRTF7"] + myText[1] + "}"
+        # create notes
+        notes = config["notesRTF7"] + my_text[1] + "}"
         slide.actions[0].slide.presentation.notes.rtf_data = notes
-        #add text element
-        textElement = copy.deepcopy(config["textElement7"])
-        textElement.element.uuid.string = str(uuid.uuid4())
-        rftText = config["textStyle7"] + myText[1].upper() + "}"
-        textElement.element.text.rtf_data = rftText
+        # add text element
+        text_element = copy.deepcopy(config["textElement7"])
+        text_element.element.uuid.string = str(uuid.uuid4())
+        rft_text = config["textStyle7"] + my_text[1].upper() + "}"
+        text_element.element.text.rtf_data = rft_text
         slide.actions[0].slide.presentation.base_slide.elements.append(
-            textElement)
-        #add caption element
-        if "captionElement7" in config and caption != None:
-            myCaption = ReplaceSpecialCharacters(caption)
-            captionElement = copy.deepcopy(config["captionElement7"])
-            captionElement.element.uuid.string = str(uuid.uuid4())
-            rftCaption = config["captionStyle7"] + myCaption[1] + "}"
-            captionElement.element.text.rtf_data = rftCaption
+            text_element)
+        # add caption element
+        if "captionElement7" in config and caption is not None:
+            my_caption = ReplaceSpecialCharacters(caption)
+            caption_element = copy.deepcopy(config["captionElement7"])
+            caption_element.element.uuid.string = str(uuid.uuid4())
+            rft_caption = config["captionStyle7"] + my_caption[1] + "}"
+            caption_element.element.text.rtf_data = rft_caption
             slide.actions[0].slide.presentation.base_slide.elements.append(
-                captionElement)
-        #add lower shape element
+                caption_element)
+        # add lower shape element
         if "lowerShapeElement7" in config:
-            lowerShape = copy.deepcopy(config["lowerShapeElement7"])
-            lowerShape.element.uuid.string = str(uuid.uuid4())
+            lower_shape = copy.deepcopy(config["lowerShapeElement7"])
+            lower_shape.element.uuid.string = str(uuid.uuid4())
             slide.actions[0].slide.presentation.base_slide.elements.append(
-                lowerShape)
+                lower_shape)
         presentation.cues.append(slide)
-    return slideUuid
+    return slide_uuid
 
 
-def CreateGroup(config, groupConfig, presentation, name, language, caption):
-    group = copy.deepcopy(groupConfig[name])
-    #update uuid
-    groupUuid = str(uuid.uuid4())
-    group.group.uuid.string = groupUuid
-    #create slides
+def CreateGroup(config, group_config, presentation, name, language, caption):
+    group = copy.deepcopy(group_config[name])
+
+    # update uuid
+    group_uuid = str(uuid.uuid4())
+    group.group.uuid.string = group_uuid
+
+    # create slides
     for i in range(0, len(language)):
-        if caption == None:
-            captionText = None
+        if caption is None:
+            caption_text = None
         else:
-            captionText = caption[i]
-        slideUuidStr = CreateSlide(
-            config, presentation, language[i], captionText)
-        #add slides to group
-        for slide in slideUuidStr:
-            slideUuid = basicTypes_pb2.UUID()
-            slideUuid.string = slide
-            group.cue_identifiers.append(slideUuid)
+            caption_text = caption[i]
+        slide_uuid_str = CreateSlide(
+            config, presentation, language[i], caption_text)
+
+        # add slides to group
+        for slide in slide_uuid_str:
+            slide_uuid = basicTypes_pb2.UUID()
+            slide_uuid.string = slide
+            group.cue_identifiers.append(slide_uuid)
     presentation.cue_groups.append(group)
-    return groupUuid
+    return group_uuid
 
 
-def CreateInstrumental(config, groupConfig, presentation):
-    #add Instrumental group
-    group = copy.deepcopy(groupConfig[groupConfig.keys()[0]])
-    #update uuid
-    groupUuid = str(uuid.uuid4())
-    group.group.uuid.string = groupUuid
+def CreateInstrumental(config, group_config, presentation):
+    # add Instrumental group
+    group = copy.deepcopy(group_config[group_config.keys()[0]])
+
+    # update uuid
+    group_uuid = str(uuid.uuid4())
+    group.group.uuid.string = group_uuid
     group.group.name = "Instrumental"
     group.group.color.Clear()
     group.group.hotKey.Clear()
-    #add Instrumental slide
+
+    # add Instrumental slide
     slide = copy.deepcopy(config["slide7"])
-    #update uuid
-    slideUuidStr = str(uuid.uuid4())
-    slide.uuid.string = slideUuidStr
+
+    # update uuid
+    slide_uuid_str = str(uuid.uuid4())
+    slide.uuid.string = slide_uuid_str
     slide.actions[0].uuid.string = str(uuid.uuid4())
-    slide.actions[0].slide.presentation.base_slide.uuid.string = str(
-        uuid.uuid4())
+    slide.actions[0].slide.presentation.base_slide.uuid.string = str(uuid.uuid4())
     presentation.cues.append(slide)
-    slideUuid = basicTypes_pb2.UUID()
-    slideUuid.string = slideUuidStr
-    group.cue_identifiers.append(slideUuid)
+    slide_uuid = basicTypes_pb2.UUID()
+    slide_uuid.string = slide_uuid_str
+    group.cue_identifiers.append(slide_uuid)
     presentation.cue_groups.append(group)
-    return groupUuid
+    return group_uuid
 
 
 def CreateArrangements(config, presentation, arrangements, uuids):
