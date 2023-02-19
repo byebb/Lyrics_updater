@@ -50,27 +50,25 @@ def ReplaceSpecialCharacters(text):
 def ReplaceSpecialCharactersUPPER(text):
     output = copy.deepcopy(text)
     for i in range(0, len(output)):
-        # Ä
-        output[i] = output[i].replace(u'\u00c4', "\\'c4")
-        # Ö
-        output[i] = output[i].replace(u'\u00d6', "\\'d6")
-        # Ü
-        output[i] = output[i].replace(u'\u00dc', "\\'dc")
-        # ä
-        output[i] = output[i].replace(u'\u00e4', "\\'c4")
-        # ö
-        output[i] = output[i].replace(u'\u00f6', "\\'d6")
-        # ü
-        output[i] = output[i].replace(u'\u00fc', "\\'dc")
+        output[i] = output[i].replace(u'\u00e4', "\\'c4")        # ä -> Ä
+        output[i] = output[i].replace(u'\u00c4', "\\'c4")        # Ä -> Ä
+        output[i] = output[i].replace(u'\u00f6', "\\'d6")        # ö -> Ö
+        output[i] = output[i].replace(u'\u00d6', "\\'d6")        # Ö -> Ö
+        output[i] = output[i].replace(u'\u00fc', "\\'dc")        # ü -> Ü
+        output[i] = output[i].replace(u'\u00dc', "\\'dc")        # Ü -> Ü
+        output[i] = output[i].replace(u'\u2019', "\\'27")        # ’
+
         # ß --> ss/SS doesn matter, since we apply .upper() anyway, only not working for utf8 codes
         output[i] = output[i].replace(u'\u00df', "SS")
-        # ’
-        output[i] = output[i].replace(u'\u2019', "\\'27")
+
         output[i] = output[i].encode()
     return output
 
 
 def CreateSlide(config, presentation, text, caption):
+
+    debug_output = False
+
     slide = copy.deepcopy(config["slide7"])
 
     # update uuid
@@ -86,20 +84,25 @@ def CreateSlide(config, presentation, text, caption):
 
     # create notes
     notes = config["notesRTF7"] + my_text[0]
-    if (False == config["singleLine7"]) and (len(my_text) == 2):
+    if (config["singleLine7"] == False) and (len(my_text) == 2):
         notes += config["notesSecondRTF7"] + my_text[1]
     notes += "}"
     slide.actions[0].slide.presentation.notes.rtf_data = notes
 
     # add text element
-    # print(my_text[0])
-    print("[LYR] " + my_text[0].upper())
+    if debug_output:
+        print(my_text[0])
+        print("[LYR1] " + my_text[0].upper())
 
     text_element = copy.deepcopy(config["textElement7"])
     text_element.element.uuid.string = str(uuid.uuid4())
     rft_text = config["textStyle7"] + my_text[0].upper()
-    if (False == config["singleLine7"]) and (len(my_text) == 2):
+
+    if config["singleLine7"] is False and len(my_text) == 2:
         rft_text += config["textStyleSecond7"] + my_text[1].upper()
+        if debug_output:
+            print("[LYR2] " + my_text[1].upper())
+
     rft_text += "}"
     text_element.element.text.rtf_data = rft_text
     slide.actions[0].slide.presentation.base_slide.elements.append(text_element)
@@ -108,7 +111,8 @@ def CreateSlide(config, presentation, text, caption):
     if "captionElement7" in config and caption is not None:
         my_caption = ReplaceSpecialCharacters(caption)
 
-        print ("[CAP] " + ", ".join(my_caption))
+        if debug_output:
+            print ("[CAPT] " + ", ".join(my_caption))
 
         caption_element = copy.deepcopy(config["captionElement7"])
         caption_element.element.uuid.string = str(uuid.uuid4())
