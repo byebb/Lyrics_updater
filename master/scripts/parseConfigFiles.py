@@ -4,7 +4,7 @@ import os
 import re
 import base64
 import sys
-from scripts.pp7_pb2 import presentation_pb2
+from pp7_pb2 import presentation_pb2
 
 
 def ParseConfigFiles(config_manager):
