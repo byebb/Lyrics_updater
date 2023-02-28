@@ -80,7 +80,7 @@ def CreateSlide(config, presentation, text, caption):
     my_text = ReplaceSpecialCharacters(text)
 
     # IN CASE WE NEED IT UPPERCASE
-    my_text = ReplaceSpecialCharactersUPPER(text)
+    my_text_upper = ReplaceSpecialCharactersUPPER(text)
 
     # create notes
     notes = config["notesRTF7"] + my_text[0]
@@ -96,12 +96,12 @@ def CreateSlide(config, presentation, text, caption):
 
     text_element = copy.deepcopy(config["textElement7"])
     text_element.element.uuid.string = str(uuid.uuid4())
-    rft_text = config["textStyle7"] + my_text[0].upper()
+    rft_text = config["textStyle7"] + my_text_upper[0].upper()
 
     if config["singleLine7"] is False and len(my_text) == 2:
-        rft_text += config["textStyleSecond7"] + my_text[1].upper()
+        rft_text += config["textStyleSecond7"] + my_text_upper[1].upper()
         if debug_output:
-            print("[LYR2] " + my_text[1].upper())
+            print("[LYR2] " + my_text_upper[1].upper())
 
     rft_text += "}"
     text_element.element.text.rtf_data = rft_text
@@ -154,7 +154,7 @@ def CreateSlide(config, presentation, text, caption):
         # add text element
         text_element = copy.deepcopy(config["textElement7"])
         text_element.element.uuid.string = str(uuid.uuid4())
-        rft_text = config["textStyle7"] + my_text[1].upper() + "}"
+        rft_text = config["textStyle7"] + my_text_upper[1].upper() + "}"
         text_element.element.text.rtf_data = rft_text
         slide.actions[0].slide.presentation.base_slide.elements.append(
             text_element)
