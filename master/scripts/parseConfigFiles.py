@@ -4,7 +4,7 @@ import os
 import re
 import base64
 import sys
-from pp7_pb2 import presentation_pb2
+from pp7_pb2 import presentation_pb2, hotKey_pb2
 
 
 def ParseConfigFiles(config_manager):
@@ -40,17 +40,27 @@ def ParseMasterConfigPro6(config_manager):
 
 def ParseMasterConfigPro7(config_manager):
     print('Parsing "masterConfig_Groups.pro"')
+
     __file = __file__.decode(sys.getfilesystemencoding())
     dirname = os.path.dirname(os.path.abspath(__file))
     parent_parent_dir = os.path.abspath(os.path.join(os.path.join(dirname, os.pardir), os.pardir))
+    
+    path = os.path.join(parent_parent_dir, "config", "masterConfig_Groups.pro")
+    print("Pro7 MasterConfig Path: " + path)
+
     presentation = presentation_pb2.Presentation()
-    f = open(os.path.join(parent_parent_dir, "config", "masterConfig_Groups.pro"), "rb")
+    f = open(path, "rb")
     presentation.ParseFromString(f.read())
     f.close()
 
     # store all groups in masterconfig
     config_manager["groupConfigs7"] = {}
+    
     for groups in presentation.cue_groups:
+
+        if (groups.group.name == "Verse 1"):            
+            groups.group.hotKey.code = hotKey_pb2.HotKey.KeyCode.KEY_CODE_ANSI_Q
+
         groups.ClearField("cue_identifiers")
         config_manager["groupConfigs7"][groups.group.name] = groups
 

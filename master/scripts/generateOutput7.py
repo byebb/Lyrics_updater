@@ -1,7 +1,7 @@
 # -- coding: utf-8 --
 
 import uuid
-from pp7_pb2 import basicTypes_pb2, presentation_pb2
+from pp7_pb2 import basicTypes_pb2, presentation_pb2, hotKey_pb2
 import os
 import copy
 
@@ -183,6 +183,7 @@ def CreateGroup(config, group_config, presentation, name, language, caption):
     # update uuid
     group_uuid = str(uuid.uuid4())
     group.group.uuid.string = group_uuid
+    
 
     # create slides
     for i in range(0, len(language)):
@@ -190,14 +191,14 @@ def CreateGroup(config, group_config, presentation, name, language, caption):
             caption_text = None
         else:
             caption_text = caption[i]
-        slide_uuid_str = CreateSlide(
-            config, presentation, language[i], caption_text)
+        slide_uuid_str = CreateSlide(config, presentation, language[i], caption_text)
 
         # add slides to group
         for slide in slide_uuid_str:
             slide_uuid = basicTypes_pb2.UUID()
             slide_uuid.string = slide
             group.cue_identifiers.append(slide_uuid)
+
     presentation.cue_groups.append(group)
     return group_uuid
 
@@ -211,7 +212,7 @@ def CreateInstrumental(config, group_config, presentation):
     group.group.uuid.string = group_uuid
     group.group.name = "Instrumental"
     group.group.color.Clear()
-    group.group.hotKey.Clear()
+    # group.group.hotKey.Clear()
 
     # add Instrumental slide
     slide = copy.deepcopy(config["slide7"])
@@ -261,8 +262,7 @@ def CreateOutput(config, groupConfig, name, language, caption, arrangements):
         uuids[group] = CreateGroup(config, groupConfig, presentation, group,
                                    language["groups"][group], captionGroup)
     # create Instrumental
-    uuids["Instrumental"] = CreateInstrumental(
-        config, groupConfig, presentation)
+    uuids["Instrumental"] = CreateInstrumental(config, groupConfig, presentation)
     # create arrangements
     CreateArrangements(config, presentation, arrangements, uuids)
     # write output to file
