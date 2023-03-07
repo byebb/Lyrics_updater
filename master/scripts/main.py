@@ -6,8 +6,6 @@ import parseTextFiles as text
 import generateOutput as output
 import generateOutput7 as output7
 import os
-import Tkinter
-import tkFileDialog
 import glob
 import unicodedata
 
@@ -34,14 +32,7 @@ try:
     args = parser.parse_args()
     filenames=[]
 
-    if args.type == "all":
-        filenames = glob.glob(root + u"\\*txt")
-    else: 
-        # Open a file dialog to select the text files to process
-        master = Tkinter.Tk()
-        filenames = tkFileDialog.askopenfilename(
-            multiple=True, initialdir=root, title="Select Files to generate", filetypes=(("txt files", "*.txt"),))
-        filenames = master.tk.splitlist(filenames)
+    filenames = glob.glob(root + u"/*txt")
 
     number_of_songs = 0
     if int(args.limit) > 0:

@@ -19,7 +19,7 @@ def ParseConfigFiles(config_manager):
         os.makedirs(pp6)        
     if not os.path.exists(pp7):
         os.makedirs(pp7)
-        
+
     ParseMasterConfigPro6(config_manager)
     ParseMasterConfigPro7(config_manager)
     ParseConfigFilesPro6(config_manager)
@@ -86,7 +86,8 @@ def ParseConfigFilesPro6(config_manager):
     dirname = os.path.dirname(os.path.abspath(__file))
 
     parent_parent_dir = os.path.abspath(os.path.join(os.path.join(dirname, os.pardir), os.pardir))
-    search_regex = parent_parent_dir + "\\config\\config_*.pro6"
+
+    search_regex = parent_parent_dir + "/config/config_*.pro6"
     search_result_configs = os.path.join(dirname, search_regex)
 
     # print ("SEARCH_REGEX: " + search_regex)
@@ -175,7 +176,7 @@ def ParseConfigFilesPro7(config_manager):
     dirname = os.path.dirname(os.path.abspath(__file))
 
     parent_parent_dir = os.path.abspath(os.path.join(os.path.join(dirname, os.pardir), os.pardir))
-    search_regex = parent_parent_dir + "\\config\\config_*.pro"
+    search_regex = parent_parent_dir + "/config/config_*.pro"
     search_result_configs = os.path.join(dirname, search_regex)
 
     for config_path in glob.glob(search_result_configs):
