@@ -2,4 +2,4 @@
 Output/**/*.pro6
 Output/**/*.pro
 Output/PROPRESENTER7
-.pyc
+*.pyc
