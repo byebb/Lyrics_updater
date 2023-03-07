@@ -8,6 +8,18 @@ from pp7_pb2 import presentation_pb2, hotKey_pb2
 
 
 def ParseConfigFiles(config_manager):
+    
+    __file = __file__.decode(sys.getfilesystemencoding())
+    dirname = os.path.dirname(os.path.abspath(__file))
+    parent_parent_dir = os.path.abspath(os.path.join(os.path.join(dirname, os.pardir), os.pardir))
+
+    pp6 = os.path.join(parent_parent_dir, "Output", "Pro6")
+    pp7 = os.path.join(parent_parent_dir, "Output", "Pro7")
+    if not os.path.exists(pp6):
+        os.makedirs(pp6)        
+    if not os.path.exists(pp7):
+        os.makedirs(pp7)
+        
     ParseMasterConfigPro6(config_manager)
     ParseMasterConfigPro7(config_manager)
     ParseConfigFilesPro6(config_manager)
