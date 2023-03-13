@@ -3,7 +3,7 @@
 import copy
 import uuid
 import base64
-import os
+import os, codecs, io
 import xml.etree.ElementTree as ET
 
 
@@ -258,11 +258,12 @@ def CreateOutput(config, groupConfig, name, language, caption, arrangements):
     uuids["Instrumental"] = CreateInstrumental(config, groupConfig, output)
     # create arrangements
     CreateArrangements(config, output, arrangements, uuids)
+
     # write output to file
-    file = os.path.join(
-        config["path"], u"{0}_{1}_{2}.pro6".format(name, language["name"],
-                                                   config["styleName"]))
-    f = open(file, 'w')
+    file = os.path.join(config["path"], u"{0}_{1}_{2}.pro6".format(name, language["name"],config["styleName"]))
+    # f = open(file, 'w')
+    f = codecs.open(file.encode('utf-8'), "w", encoding='utf-8') 
+
     temp = ET.tostring(output)
     f.write(temp)
     f.close()

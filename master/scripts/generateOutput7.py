@@ -2,7 +2,7 @@
 
 import uuid
 from pp7_pb2 import basicTypes_pb2, presentation_pb2, hotKey_pb2
-import os
+import os, codecs, io
 import copy
 
 
@@ -266,10 +266,12 @@ def CreateOutput(config, groupConfig, name, language, caption, arrangements):
     # create arrangements
     CreateArrangements(config, presentation, arrangements, uuids)
     # write output to file
-    file = os.path.join(
-        config["path7"], u"{0}_{1}_{2}.pro".format(name, language["name"],
-                                                   config["styleName7"]))
-    f = open(file, 'wb')
+    
+    file = os.path.join(config["path7"], u"{0}_{1}_{2}.pro".format(name, language["name"],config["styleName7"]))
+    
+    f = open(file.encode('utf-8'), 'wb')
+
+    # print (presentation.SerializeToString())
     f.write(presentation.SerializeToString())
     f.close()
 

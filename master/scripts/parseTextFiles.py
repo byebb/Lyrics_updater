@@ -1,6 +1,6 @@
 # -- coding: utf-8 --
 
-import os
+import os, codecs, io
 import unicodedata
 
 
@@ -157,8 +157,10 @@ def CheckOutput(output):
 
 def ParseTextFile(directory, file, groupConfig):
     # read input file
-    f = open(os.path.join(directory, file), 'rb')
-    originalInput = f.read().decode("utf-8")
+
+    f = codecs.open(os.path.join(directory, file).encode('utf-8'), encoding='utf-8') 
+    originalInput = f.read()
+
     f.close()
     output = {}
     output["name"] = unicodedata.normalize("NFC", file).replace(".txt", "")
@@ -179,4 +181,5 @@ def ParseTextFile(directory, file, groupConfig):
     line = originalInput.count("\n", 0, pos) + 1
     output["arrangements"] = ParseArrangements(input[-1], groupConfig, line)
     CheckOutput(output)
+
     return output
