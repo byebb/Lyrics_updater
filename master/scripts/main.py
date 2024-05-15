@@ -4,7 +4,7 @@
 import sys
 import time
 import parseConfigFiles as Config
-import parseTextFiles as text
+import projects.Lyrics_updater.master.scripts.parseTextFiles_old as text
 import generateOutput as output
 import generateOutput7 as output7
 import os, codecs, io
@@ -28,7 +28,7 @@ if args.style is not "CONSOLE":
 
 
 def PrintC(style, content):
-    if (style is "console"):
+    if (style is "CONSOLE"):
         print(content)
     else:
         print(content + "<br>")
@@ -47,12 +47,12 @@ try:
 
     root = os.path.join(dirname, folder)   
                             
-    songs_path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file)), os.pardir))
-    songs_path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(songs_path)), os.pardir))
-    songs_path = os.path.abspath(os.path.dirname(os.path.abspath(songs_path)))
+    html_root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file)), os.pardir))
+    html_root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(html_root)), os.pardir))
+    html_root = os.path.abspath(os.path.dirname(os.path.abspath(html_root)))
 
     jsonobj = { "completed_songs": []}               
-    with codecs.open(os.path.join(songs_path,"songs.json").encode('utf-8'), "w", encoding='utf-8') as outfile:
+    with codecs.open(os.path.join(html_root,"songs.json").encode('utf-8'), "w", encoding='utf-8') as outfile:
         json.dump(jsonobj, outfile, ensure_ascii=False, indent=4)            
         
     filenames=[]
@@ -66,6 +66,7 @@ try:
     PrintC(print_style, '============================================')
     PrintC(print_style, u'[START] CONVERTING SELECTED SONGS...')
     PrintC(print_style, u'[FOLDER] '+root+'...')
+    PrintC(print_style, u'[SONGS_PATH] '+html_root+'...')
     PrintC(print_style, '============================================')
 
     # Start Library Creation Timer
@@ -112,7 +113,7 @@ try:
 
                 jsonobj = { "completed_songs": completed_songs}               
 
-                with codecs.open(os.path.join(songs_path,"songs.json").encode('utf-8'), "w", encoding='utf-8') as outfile:
+                with codecs.open(os.path.join(html_root,"songs.json").encode('utf-8'), "w", encoding='utf-8') as outfile:
                     json.dump(jsonobj, outfile, ensure_ascii=False, indent=4)            
 
         # If an error occurs, print the error message

@@ -29,7 +29,7 @@ if args.style is not "CONSOLE":
 
 
 def PrintC(style, content):
-    if (style is "console"):
+    if (style is "CONSOLE"):
         print(content)
     else:
         print(content + "<br>")

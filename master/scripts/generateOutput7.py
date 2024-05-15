@@ -243,11 +243,24 @@ def CreateArrangements(config, presentation, arrangements, uuids):
         presentation.arrangements.append(arr)
         presentation.selected_arrangement.string = arrUuid
 
+print_style="CONSOLE"
+def PrintC(style, content):
+    if (style is "CONSOLE"):
+        print(content)
+    else:
+        print(content + "<br>")
 
-def CreateOutput(config, groupConfig, name, language, caption, arrangements):
+def CreateOutput(config, groupConfig, name, language, caption, arrangements, fullInput):
     presentation = copy.deepcopy(config["presentation7"])
     #update uuid
     presentation.uuid.string = str(uuid.uuid4())
+    
+    ccli = int(fullInput["CCLI_number"][language["name"]])
+    PrintC(print_style, u'CCLI: {0}'.format(ccli))
+    if (ccli != None):
+        # add CCLI song number
+        presentation.ccli.song_number = ccli
+    
     #update name
     songName = "{0}_{1}_{2}".format(
         name.encode('ascii','ignore'), language["name"], config["styleName7"])
@@ -277,15 +290,16 @@ def CreateOutput(config, groupConfig, name, language, caption, arrangements):
 
 
 def CreateOutputs(config, groupConfig, inputText):
+    
     # check if two languages are provided
     if len(inputText["languages"]) == 2:
         CreateOutput(config, groupConfig, inputText["name"],
                      inputText["languages"][0], inputText["languages"][1],
-                     inputText["arrangements"])
+                     inputText["arrangements"], inputText)
         CreateOutput(config, groupConfig, inputText["name"],
                      inputText["languages"][1], inputText["languages"][0],
-                     inputText["arrangements"])
+                     inputText["arrangements"], inputText)
     else:
         CreateOutput(config, groupConfig, inputText["name"],
                      inputText["languages"][0], None,
-                     inputText["arrangements"])
+                     inputText["arrangements"], inputText)
