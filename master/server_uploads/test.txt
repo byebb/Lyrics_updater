@@ -1,0 +1,79 @@
+DE
+CCLI=1234567
+
+Verse 1
+
+DE - My Test Verse1 - Zeile 1-1
+DE - My Test Verse1 - Zeile 1-2
+
+Chorus 1
+
+DE - My Test Chorus1 - Zeile 1-1
+DE - My Test Chorus1 - Zeile 1-2
+
+DE - My Test Chorus1 - Zeile 2-1
+
+DE - My Test Chorus1 - Zeile 3-1
+DE - My Test Chorus1 - Zeile 3-2
+
+DE - My Test Chorus1 - Zeile 2-1
+
+Verse 2
+
+DE - My Test Verse1 - Zeile 1-1
+DE - My Test Verse1 - Zeile 1-2
+
+Prechorus 1
+
+DE - My Test Prechorus1 - Zeile 1-1
+DE - My Test Prechorus1- Zeile 1-2
+
+
+EN
+CCLI=1234567
+
+Verse 1
+
+EN - My Test Verse1 - Zeile 1-1
+EN - My Test Verse1 - Zeile 1-2
+
+Chorus 1
+
+EN - My Test Chorus1 - Zeile 1-1
+EN - My Test Chorus1 - Zeile 1-2
+
+EN - My Test Chorus1 - Zeile 2-1
+
+EN - My Test Chorus1 - Zeile 3-1
+EN - My Test Chorus1 - Zeile 3-2
+
+EN - My Test Chorus1 - Zeile 2-1
+
+Verse 2
+
+EN - My Test Verse1 - Zeile 1-1
+EN - My Test Verse1 - Zeile 1-2
+
+Prechorus 1
+
+EN - My Test Prechorus1- Zeile 1-1
+EN - My Test Prechorus1- Zeile 1-2
+
+
+Arrangements
+
+Backing Track
+
+Instrumental
+Verse 1
+Chorus 1
+Verse 2
+Prechorus 1
+
+test
+
+Instrumental
+Chorus 1
+Verse 2
+Prechorus 1
+
