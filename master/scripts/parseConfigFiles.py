@@ -7,30 +7,44 @@ import sys
 from pp7_pb2 import presentation_pb2, hotKey_pb2
 
 
-def ParseConfigFiles(config_manager):
+def PrintC(style, content):
+    if (style is "console"):
+        print(content)
+    else:
+        print(content + "<br>")
+
+
+def ParseConfigFiles(config_manager, print_style, zip_path="Output"):
     
     __file = __file__.decode(sys.getfilesystemencoding())
     dirname = os.path.dirname(os.path.abspath(__file))
     parent_parent_dir = os.path.abspath(os.path.join(os.path.join(dirname, os.pardir), os.pardir))
 
+
     pp6 = os.path.join(parent_parent_dir, "Output", "Pro6")
     pp7 = os.path.join(parent_parent_dir, "Output", "Pro7")
+
+    if (zip_path is not "Output"):
+        pp6 = os.path.join(parent_parent_dir, "Single", zip_path , "Pro6")
+        pp7 = os.path.join(parent_parent_dir, "Single", zip_path , "Pro7")
+
+
     if not os.path.exists(pp6):
         os.makedirs(pp6)        
     if not os.path.exists(pp7):
         os.makedirs(pp7)
-        
-    ParseMasterConfigPro6(config_manager)
-    ParseMasterConfigPro7(config_manager)
-    ParseConfigFilesPro6(config_manager)
-    ParseConfigFilesPro7(config_manager)
+
+    ParseMasterConfigPro6(config_manager, print_style)
+    ParseMasterConfigPro7(config_manager, print_style)
+    ParseConfigFilesPro6(config_manager, print_style, pp6)
+    ParseConfigFilesPro7(config_manager, print_style, pp7)
+
     if (len(config_manager["fileConfigs"]) == 0) and (len(config_manager["fileConfigs7"]) == 0):
-        raise ValueError(
-            'Error: No configuration file was found in sub folders')
+        raise ValueError('Error: No configuration file was found in sub folders')
 
 
-def ParseMasterConfigPro6(config_manager):
-    print('Parsing "masterConfig_Groups.pro6"')
+def ParseMasterConfigPro6(config_manager, print_style):
+    PrintC(print_style, 'Parsing "masterConfig_Groups.pro6"')
     config_manager["groupConfigs"] = {}
     __file = __file__.decode(sys.getfilesystemencoding())
     dirname = os.path.dirname(os.path.abspath(__file))
@@ -50,15 +64,15 @@ def ParseMasterConfigPro6(config_manager):
         config_manager["groupConfigs"][group.get("name")] = group_out
 
 
-def ParseMasterConfigPro7(config_manager):
-    print('Parsing "masterConfig_Groups.pro"')
+def ParseMasterConfigPro7(config_manager, print_style):
+    PrintC(print_style, 'Parsing "masterConfig_Groups.pro"')
 
     __file = __file__.decode(sys.getfilesystemencoding())
     dirname = os.path.dirname(os.path.abspath(__file))
     parent_parent_dir = os.path.abspath(os.path.join(os.path.join(dirname, os.pardir), os.pardir))
     
     path = os.path.join(parent_parent_dir, "config", "masterConfig_Groups.pro")
-    print("Pro7 MasterConfig Path: " + path)
+    PrintC(print_style, "Pro7 MasterConfig Path: " + path)
 
     presentation = presentation_pb2.Presentation()
     f = open(path, "rb")
@@ -77,7 +91,7 @@ def ParseMasterConfigPro7(config_manager):
         config_manager["groupConfigs7"][groups.group.name] = groups
 
 
-def ParseConfigFilesPro6(config_manager):
+def ParseConfigFilesPro6(config_manager, print_style, pp6_out_path):
     # loop over all config files in the subfolders
     config_manager["fileConfigs"] = []
 
@@ -86,7 +100,8 @@ def ParseConfigFilesPro6(config_manager):
     dirname = os.path.dirname(os.path.abspath(__file))
 
     parent_parent_dir = os.path.abspath(os.path.join(os.path.join(dirname, os.pardir), os.pardir))
-    search_regex = parent_parent_dir + "\\config\\config_*.pro6"
+
+    search_regex = parent_parent_dir + "/config/config_*.pro6"
     search_result_configs = os.path.join(dirname, search_regex)
 
     # print ("SEARCH_REGEX: " + search_regex)
@@ -94,11 +109,11 @@ def ParseConfigFilesPro6(config_manager):
     # loop over all config files found in the search
     for config_path in glob.glob(search_result_configs):
         # print which file is being processed
-        print('Parsing "{0}"'.format(config_path))
+        PrintC(print_style, 'Parsing "{0}"'.format(config_path))
         # create a dictionary to store the extracted data from the current config file
         config_dict = {}
         # save the path of the current config file
-        config_dict["path"] = os.path.join(parent_parent_dir, "Output", "Pro6")
+        config_dict["path"] = pp6_out_path
         # save the name of the style associated with the current config file
         config_dict["styleName"] = re.search('config_(.*).pro6', config_path).group(1)
         # read config file
@@ -167,7 +182,7 @@ def ParseConfigFilesPro6(config_manager):
         config_manager["fileConfigs"].append(config_dict)
 
 
-def ParseConfigFilesPro7(config_manager):
+def ParseConfigFilesPro7(config_manager, print_style, pp7_out_path):
     # loop over all config files in the subfolders
     config_manager["fileConfigs7"] = []
 
@@ -175,15 +190,15 @@ def ParseConfigFilesPro7(config_manager):
     dirname = os.path.dirname(os.path.abspath(__file))
 
     parent_parent_dir = os.path.abspath(os.path.join(os.path.join(dirname, os.pardir), os.pardir))
-    search_regex = parent_parent_dir + "\\config\\config_*.pro"
+    search_regex = parent_parent_dir + "/config/config_*.pro"
     search_result_configs = os.path.join(dirname, search_regex)
 
     for config_path in glob.glob(search_result_configs):
-        print('Parsing "{0}"'.format(config_path))
+        PrintC(print_style, 'Parsing "{0}"'.format(config_path))
         config_dict = {}
 
         # save path
-        config_dict["path7"] = os.path.join(parent_parent_dir, "Output", "Pro7")
+        config_dict["path7"] = pp7_out_path
 
         # save style name
         config_dict["styleName7"] = re.search('config_(.*).pro', config_path).group(1)

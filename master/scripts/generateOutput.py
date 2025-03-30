@@ -3,7 +3,7 @@
 import copy
 import uuid
 import base64
-import os
+import os, codecs, io
 import xml.etree.ElementTree as ET
 
 
@@ -237,14 +237,19 @@ def CreateArrangements(config, output, arrangements, uuids):
         arrangementsOutput.append(arrangementOutput)
 
 
-def CreateOutput(config, groupConfig, name, language, caption, arrangements):
+def CreateOutput(config, groupConfig, name, language, caption, arrangements, fullInput):
     output = copy.deepcopy(config["rvPresentationDocument"])
     # add uuid
     output.set("uuid", str(uuid.uuid4()))
     # add title
-    output.set(
-        u"CCLISongTitle", u"{0}_{1}_{2}".format(name, language["name"],
+    output.set(u"CCLISongTitle", u"{0}_{1}_{2}".format(name, language["name"],
                                                 config["styleName"]))
+    
+    ccli = fullInput["CCLI_number"][language["name"]]
+    if (ccli != None):
+        # add CCLI song number
+        output.set(u"CCLISongNumber", u"{0}".format(ccli))
+    
     uuids = {}
     # create groups
     for group in language["groups"]:
@@ -258,26 +263,28 @@ def CreateOutput(config, groupConfig, name, language, caption, arrangements):
     uuids["Instrumental"] = CreateInstrumental(config, groupConfig, output)
     # create arrangements
     CreateArrangements(config, output, arrangements, uuids)
+
     # write output to file
-    file = os.path.join(
-        config["path"], u"{0}_{1}_{2}.pro6".format(name, language["name"],
-                                                   config["styleName"]))
-    f = open(file, 'w')
+    file = os.path.join(config["path"], u"{0}_{1}_{2}.pro6".format(name, language["name"],config["styleName"]))
+    # f = open(file, 'w')
+    f = codecs.open(file.encode('utf-8'), "w", encoding='utf-8') 
+
     temp = ET.tostring(output)
     f.write(temp)
     f.close()
 
 
-def CreateOutputs(config, groupConfig, inputText):
+def CreateOutputs(config, groupConfig, inputText):    
+    
     # check if two languages are provided
     if len(inputText["languages"]) == 2:
         CreateOutput(config, groupConfig, inputText["name"],
                      inputText["languages"][0], inputText["languages"][1],
-                     inputText["arrangements"])
+                     inputText["arrangements"], inputText)
         CreateOutput(config, groupConfig, inputText["name"],
                      inputText["languages"][1], inputText["languages"][0],
-                     inputText["arrangements"])
+                     inputText["arrangements"], inputText)
     else:
         CreateOutput(config, groupConfig, inputText["name"],
                      inputText["languages"][0], None,
-                     inputText["arrangements"])
+                     inputText["arrangements"], inputText)
