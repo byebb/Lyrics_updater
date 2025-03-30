@@ -1,4 +1,5 @@
 DE
+CCLI=7100262
 
 Verse 1
 
@@ -19,7 +20,7 @@ Milliarden Galaxien sind geborn
 
 Denn der Atem Deiner Worte gibt die Form
 
-Wenn die Sterne Dich anbeten,
+Wenn die Sterne Dich anbeten
 dann auch ich
 
 Ich entdeck Dein Herz in allem was Du schufst
@@ -27,7 +28,7 @@ Ich entdeck Dein Herz in allem was Du schufst
 Jeder Stern, der strahlt
 Ein Zeichen Deiner Gunst
 
-Wenn die Schöpfung Dir Dein Lob singt,
+Wenn die Schöpfung Dir Dein Lob singt
 dann auch ich
 
 Verse 2
@@ -49,7 +50,7 @@ Milliarden Kreaturen atmen dann
 
 Entfalten sich genau nach Deinem Plan
 
-Wenn das alles Dich verkörpert,
+Wenn das alles Dich verkörpert
 dann auch ich
 
 Ich entdeck Dein Herz in allem was Du sagst
@@ -57,29 +58,29 @@ Ich entdeck Dein Herz in allem was Du sagst
 Selbst das Himmelszelt
 Hast Du mit Gunst bemalt
 
-Wenn die Schöpfung Dir gehorcht,
+Wenn die Schöpfung Dir gehorcht
 ja dann auch ich
 
 Bridge 1
 
-Wenn die Sterne Dich verehren,
+Wenn die Sterne Dich verehren
 dann auch ich
 
-Wenn die Berge sich verneigen,
+Wenn die Berge sich verneigen
 dann auch ich
 
-Wenn die Meere Dein Lob brüllen,
+Wenn die Meere Dein Lob brüllen
 dann auch ich
 
 Denn wenn alles für Dich lebt
-und Dich erhebt,
+und Dich erhebt
 
 dann auch ich
 
-Wenn der Wind sich Deinem Ruf beugt,
+Wenn der Wind sich Deinem Ruf beugt
 dann auch ich
 
-Wenn die Steine schweigend schreien,
+Wenn die Steine schweigend schreien
 dann auch ich
 
 Wenn all unser Lobpreis
@@ -104,16 +105,16 @@ Chorus 3
 Du sprichst ein Wort
 Milliarden meiner Fehler sind nun weg
 
-Dort wo Du Dein Leben hingabst,
+Dort wo Du Dein Leben hingabst
 find ich es
 
-Wenn Du Dein Grab hinter Dir lässt,
+Wenn Du Dein Grab hinter Dir lässt
 dann auch ich
 
 Ich entdeck Dein Herz in allem was du tust
 Dieses Kunstwerk namens Liebe, das du schufst
 
-Wenn Du gerne Dich ergibst,
+Wenn Du gerne Dich ergibst
 ja dann ich auch
 
 Ich entdeck Dein Herz
@@ -122,7 +123,7 @@ Fast acht Milliarden Mal
 Jeder Einzelne
 Ein Schatz für den Du starbst
 
-Wenn aus Liebe Du Dich hingabst,
+Wenn aus Liebe Du Dich hingabst
 dann auch ich
 
 Tag 1
@@ -135,6 +136,7 @@ Du bist der, der keinen einzgen je verlässt
 
 
 EN
+CCLI=7084123
 
 Verse 1
 
