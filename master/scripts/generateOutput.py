@@ -38,10 +38,26 @@ def ReplaceSpecialCharacters(text):
         #text[i] = text[i].replace(chr(195) + chr(376), "\\'df")
         #text[i] = text[i].replace("ß", "\\'df")
         output[i] = output[i].replace(u'\u00df', "ss")
-        # ’
+        # '
         #text[i] = text[i].replace(chr(226) + chr(8364) + chr(8482), "\\'27")
-        #text[i] = text[i].replace("’", "\\'27")
+        #text[i] = text[i].replace("'","\\'27")
         output[i] = output[i].replace(u'\u2019', "\\'27")
+    return output
+
+
+def ReplaceSpecialCharactersUPPER(text):
+    output = copy.deepcopy(text)
+    for i in range(0, len(output)):
+        output[i] = output[i].replace(u'\u00e4', "\\'c4")        # ä -> Ä
+        output[i] = output[i].replace(u'\u00c4', "\\'c4")        # Ä -> Ä
+        output[i] = output[i].replace(u'\u00f6', "\\'d6")        # ö -> Ö
+        output[i] = output[i].replace(u'\u00d6', "\\'d6")        # Ö -> Ö
+        output[i] = output[i].replace(u'\u00fc', "\\'dc")        # ü -> Ü
+        output[i] = output[i].replace(u'\u00dc', "\\'dc")        # Ü -> Ü
+        output[i] = output[i].replace(u'\u2019', "\\'27")        # '
+
+        # ß --> ss/SS doesn matter, since we apply .upper() anyway, only not working for utf8 codes
+        output[i] = output[i].replace(u'\u00df', "SS")
     return output
 
 
@@ -67,7 +83,7 @@ def ReplaceSpecialCharactersForNotes(text):
     return output
 
 
-def CreateSlide(config, group, text, caption):
+def CreateSlide(config, group, text, caption, force_uppercase=True):
     slide = copy.deepcopy(config["slide"])
     # add uuid
     slide.set("UUID", str(uuid.uuid4()))
@@ -82,12 +98,17 @@ def CreateSlide(config, group, text, caption):
     textElement = copy.deepcopy(config["textElement"])
     # add uuid
     textElement.set("UUID", str(uuid.uuid4()))
-    # replace special characters
-    myText = ReplaceSpecialCharacters(text)
+    
+    # Use appropriate text processing based on force_uppercase setting
+    if force_uppercase:
+        myText = ReplaceSpecialCharactersUPPER(text)
+    else:
+        myText = ReplaceSpecialCharacters(text)
+    
     # update RTFData
-    inputText = config["textStyle"] + myText[0]
+    inputText = config["textStyle"] + (myText[0].upper() if force_uppercase else myText[0])
     if (False == config["singleLine"]) and (len(myText) == 2):
-        inputText += b'\\\n' + myText[1]
+        inputText += b'\\\n' + (myText[1].upper() if force_uppercase else myText[1])
     inputText += b'}'
     rtfData = base64.standard_b64encode(inputText)
     nsString = textElement.find("NSString[@rvXMLIvarName='RTFData']")
@@ -98,12 +119,17 @@ def CreateSlide(config, group, text, caption):
         captionElement = copy.deepcopy(config["captionElement"])
         # add uuid
         captionElement.set("UUID", str(uuid.uuid4()))
-        # replace special characters
-        myCaption = ReplaceSpecialCharacters(caption)
+        
+        # Use appropriate text processing for caption based on force_uppercase setting
+        if force_uppercase:
+            myCaption = ReplaceSpecialCharactersUPPER(caption)
+        else:
+            myCaption = ReplaceSpecialCharacters(caption)
+        
         # updateRTFData
-        inputText = config["captionStyle"] + myCaption[0]
+        inputText = config["captionStyle"] + (myCaption[0].upper() if force_uppercase else myCaption[0])
         if (False == config["singleLine"]) and (len(myCaption) == 2):
-            inputText += b'\\\n' + myCaption[1]
+            inputText += b'\\\n' + (myCaption[1].upper() if force_uppercase else myCaption[1])
         inputText += b'}'
         rtfData = base64.standard_b64encode(inputText)
         nsString = captionElement.find("NSString[@rvXMLIvarName='RTFData']")
@@ -137,7 +163,7 @@ def CreateSlide(config, group, text, caption):
         # add uuid
         textElement.set("UUID", str(uuid.uuid4()))
         # update RTFData
-        inputText = config["textStyle"] + myText[1]
+        inputText = config["textStyle"] + (myText[1].upper() if force_uppercase else myText[1])
         inputText += b'}'
         rtfData = base64.standard_b64encode(inputText)
         nsString = textElement.find("NSString[@rvXMLIvarName='RTFData']")
@@ -148,7 +174,7 @@ def CreateSlide(config, group, text, caption):
             captionElement = copy.deepcopy(config["captionElement"])
             # add uuid
             captionElement.set("UUID", str(uuid.uuid4()))
-            inputText = config["captionStyle"] + myCaption[1]
+            inputText = config["captionStyle"] + (myCaption[1].upper() if force_uppercase else myCaption[1])
             inputText += b'}'
             rtfData = base64.standard_b64encode(inputText)
             nsString = captionElement.find(
@@ -172,7 +198,7 @@ def CreateSlide(config, group, text, caption):
         slides.append(slide)
 
 
-def CreateGroup(config, groupConfig, output, name, language, caption):
+def CreateGroup(config, groupConfig, output, name, language, caption, force_uppercase=True):
     group = copy.deepcopy(config["group"])
     # set name
     group.set("name", name)
@@ -187,7 +213,7 @@ def CreateGroup(config, groupConfig, output, name, language, caption):
             captionText = None
         else:
             captionText = caption[i]
-        CreateSlide(config, group, language[i], captionText)
+        CreateSlide(config, group, language[i], captionText, force_uppercase)
     # set group hotKey
     firstSlide = group.find("array[@rvXMLIvarName='slides']")[0]
     firstSlide.set("hotKey", groupConfig[name]["hotKey"])
@@ -237,7 +263,7 @@ def CreateArrangements(config, output, arrangements, uuids):
         arrangementsOutput.append(arrangementOutput)
 
 
-def CreateOutput(config, groupConfig, name, language, caption, arrangements, fullInput):
+def CreateOutput(config, groupConfig, name, language, caption, arrangements, fullInput, force_uppercase=True):
     output = copy.deepcopy(config["rvPresentationDocument"])
     # add uuid
     output.set("uuid", str(uuid.uuid4()))
@@ -258,7 +284,7 @@ def CreateOutput(config, groupConfig, name, language, caption, arrangements, ful
         else:
             captionGroup = caption["groups"][group]
         uuids[group] = CreateGroup(config, groupConfig, output, group,
-                                   language["groups"][group], captionGroup)
+                                   language["groups"][group], captionGroup, force_uppercase)
     # create Instrumental
     uuids["Instrumental"] = CreateInstrumental(config, groupConfig, output)
     # create arrangements
@@ -274,17 +300,17 @@ def CreateOutput(config, groupConfig, name, language, caption, arrangements, ful
     f.close()
 
 
-def CreateOutputs(config, groupConfig, inputText):    
+def CreateOutputs(config, groupConfig, inputText, force_uppercase=True):    
     
     # check if two languages are provided
     if len(inputText["languages"]) == 2:
         CreateOutput(config, groupConfig, inputText["name"],
                      inputText["languages"][0], inputText["languages"][1],
-                     inputText["arrangements"], inputText)
+                     inputText["arrangements"], inputText, force_uppercase)
         CreateOutput(config, groupConfig, inputText["name"],
                      inputText["languages"][1], inputText["languages"][0],
-                     inputText["arrangements"], inputText)
+                     inputText["arrangements"], inputText, force_uppercase)
     else:
         CreateOutput(config, groupConfig, inputText["name"],
                      inputText["languages"][0], None,
-                     inputText["arrangements"], inputText)
+                     inputText["arrangements"], inputText, force_uppercase)

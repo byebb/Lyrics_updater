@@ -67,7 +67,7 @@ def ReplaceSpecialCharactersUPPER(text):
     return output
 
 
-def CreateSlide(config, presentation, text, caption):
+def CreateSlide(config, presentation, text, caption, force_uppercase):
 
     debug_output = False
 
@@ -94,19 +94,19 @@ def CreateSlide(config, presentation, text, caption):
     # add text element
     if debug_output:
         print(my_text[0])
-        print("[LYR1] " + (my_text[0].upper() if FORCE_UPPERCASE else my_text[0]))
+        print("[LYR1] " + (my_text[0].upper() if force_uppercase else my_text[0]))
 
     text_element = copy.deepcopy(config["textElement7"])
     text_element.element.uuid.string = str(uuid.uuid4())
     
-    # Use appropriate text processing based on FORCE_UPPERCASE setting
-    text_to_use = my_text_upper if FORCE_UPPERCASE else my_text
-    rft_text = config["textStyle7"] + (text_to_use[0].upper() if FORCE_UPPERCASE else text_to_use[0])
+    # Use appropriate text processing based on force_uppercase setting
+    text_to_use = my_text_upper if force_uppercase else my_text
+    rft_text = config["textStyle7"] + (text_to_use[0].upper() if force_uppercase else text_to_use[0])
 
     if config["singleLine7"] is False and len(my_text) == 2:
-        rft_text += config["textStyleSecond7"] + (text_to_use[1].upper() if FORCE_UPPERCASE else text_to_use[1])
+        rft_text += config["textStyleSecond7"] + (text_to_use[1].upper() if force_uppercase else text_to_use[1])
         if debug_output:
-            print("[LYR2] " + (text_to_use[1].upper() if FORCE_UPPERCASE else text_to_use[1]))
+            print("[LYR2] " + (text_to_use[1].upper() if force_uppercase else text_to_use[1]))
 
     rft_text += "}"
     text_element.element.text.rtf_data = rft_text
@@ -159,9 +159,9 @@ def CreateSlide(config, presentation, text, caption):
         # add text element
         text_element = copy.deepcopy(config["textElement7"])
         text_element.element.uuid.string = str(uuid.uuid4())
-        # Use appropriate text processing based on FORCE_UPPERCASE setting
-        text_to_use_second = my_text_upper if FORCE_UPPERCASE else my_text
-        rft_text = config["textStyle7"] + (text_to_use_second[1].upper() if FORCE_UPPERCASE else text_to_use_second[1]) + "}"
+        # Use appropriate text processing based on force_uppercase setting
+        text_to_use_second = my_text_upper if force_uppercase else my_text
+        rft_text = config["textStyle7"] + (text_to_use_second[1].upper() if force_uppercase else text_to_use_second[1]) + "}"
         text_element.element.text.rtf_data = rft_text
         slide.actions[0].slide.presentation.base_slide.elements.append(
             text_element)
@@ -184,7 +184,7 @@ def CreateSlide(config, presentation, text, caption):
     return slide_uuid
 
 
-def CreateGroup(config, group_config, presentation, name, language, caption):
+def CreateGroup(config, group_config, presentation, name, language, caption, force_uppercase):
     group = copy.deepcopy(group_config[name])
 
     # update uuid
@@ -198,7 +198,7 @@ def CreateGroup(config, group_config, presentation, name, language, caption):
             caption_text = None
         else:
             caption_text = caption[i]
-        slide_uuid_str = CreateSlide(config, presentation, language[i], caption_text)
+        slide_uuid_str = CreateSlide(config, presentation, language[i], caption_text, force_uppercase)
 
         # add slides to group
         for slide in slide_uuid_str:
@@ -257,7 +257,7 @@ def PrintC(style, content):
     else:
         print(content + "<br>")
 
-def CreateOutput(config, groupConfig, name, language, caption, arrangements, fullInput):
+def CreateOutput(config, groupConfig, name, language, caption, arrangements, fullInput, force_uppercase=True):
     presentation = copy.deepcopy(config["presentation7"])
     #update uuid
     presentation.uuid.string = str(uuid.uuid4())
@@ -280,7 +280,7 @@ def CreateOutput(config, groupConfig, name, language, caption, arrangements, ful
         else:
             captionGroup = caption["groups"][group]
         uuids[group] = CreateGroup(config, groupConfig, presentation, group,
-                                   language["groups"][group], captionGroup)
+                                   language["groups"][group], captionGroup, force_uppercase)
     # create Instrumental
     uuids["Instrumental"] = CreateInstrumental(config, groupConfig, presentation)
     # create arrangements
@@ -296,17 +296,17 @@ def CreateOutput(config, groupConfig, name, language, caption, arrangements, ful
     f.close()
 
 
-def CreateOutputs(config, groupConfig, inputText):
+def CreateOutputs(config, groupConfig, inputText, force_uppercase=True):
     
     # check if two languages are provided
     if len(inputText["languages"]) == 2:
         CreateOutput(config, groupConfig, inputText["name"],
                      inputText["languages"][0], inputText["languages"][1],
-                     inputText["arrangements"], inputText)
+                     inputText["arrangements"], inputText, force_uppercase)
         CreateOutput(config, groupConfig, inputText["name"],
                      inputText["languages"][1], inputText["languages"][0],
-                     inputText["arrangements"], inputText)
+                     inputText["arrangements"], inputText, force_uppercase)
     else:
         CreateOutput(config, groupConfig, inputText["name"],
                      inputText["languages"][0], None,
-                     inputText["arrangements"], inputText)
+                     inputText["arrangements"], inputText, force_uppercase)

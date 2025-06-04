@@ -36,11 +36,15 @@ def main():
     parser.add_argument("-l", "--limit", help="Default: ALL", default="0")
     parser.add_argument("-s", "--style", help="Default: CONSOLE", default="CONSOLE")
     parser.add_argument("-n", "--song", help="Default: NONE", default="none")
+    parser.add_argument("-u", "--uppercase", help="Force uppercase: 1 or 0", default="1")
     args = parser.parse_args()
 
     print_style = "CONSOLE"
     if args.style != "CONSOLE":
         print_style = "WEBSITE"
+
+    # Convert uppercase argument to boolean
+    force_uppercase = args.uppercase == "1"
 
     # Create an empty dictionary to store all the parsed configuration data
     config_all = {}
@@ -98,11 +102,11 @@ def main():
 
                 # Loop over each configuration and generate output files
                 for config in config_all["fileConfigs"]:
-                    output.CreateOutputs(config, config_all["groupConfigs"], input_text)
+                    output.CreateOutputs(config, config_all["groupConfigs"], input_text, force_uppercase)
 
                 # Loop over each configuration from pro7 and generate output files
                 for config in config_all["fileConfigs7"]:
-                    output7.CreateOutputs(config, config_all["groupConfigs7"], input_text)
+                    output7.CreateOutputs(config, config_all["groupConfigs7"], input_text, force_uppercase)
 
                 execution_time = (time.time() - start_song_timer)
                 print_formatted(print_style, u'[RUNTIME] [ {1} sec ] \t [ {0} ]'.format(filename[:-4], str(round(execution_time, 2))))           
