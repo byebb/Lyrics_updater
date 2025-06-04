@@ -5,6 +5,8 @@ from pp7_pb2 import basicTypes_pb2, presentation_pb2, hotKey_pb2
 import os, codecs, io
 import copy
 
+# Global constant to control whether text should be converted to uppercase
+FORCE_UPPERCASE = True
 
 # We need a function that converts UTF-8 codes of vowel mutations in the German language correctly.
 # Otherwise, we have a lot of gibberish in PP7 output files...
@@ -92,16 +94,19 @@ def CreateSlide(config, presentation, text, caption):
     # add text element
     if debug_output:
         print(my_text[0])
-        print("[LYR1] " + my_text[0].upper())
+        print("[LYR1] " + (my_text[0].upper() if FORCE_UPPERCASE else my_text[0]))
 
     text_element = copy.deepcopy(config["textElement7"])
     text_element.element.uuid.string = str(uuid.uuid4())
-    rft_text = config["textStyle7"] + my_text_upper[0].upper()
+    
+    # Use appropriate text processing based on FORCE_UPPERCASE setting
+    text_to_use = my_text_upper if FORCE_UPPERCASE else my_text
+    rft_text = config["textStyle7"] + (text_to_use[0].upper() if FORCE_UPPERCASE else text_to_use[0])
 
     if config["singleLine7"] is False and len(my_text) == 2:
-        rft_text += config["textStyleSecond7"] + my_text_upper[1].upper()
+        rft_text += config["textStyleSecond7"] + (text_to_use[1].upper() if FORCE_UPPERCASE else text_to_use[1])
         if debug_output:
-            print("[LYR2] " + my_text_upper[1].upper())
+            print("[LYR2] " + (text_to_use[1].upper() if FORCE_UPPERCASE else text_to_use[1]))
 
     rft_text += "}"
     text_element.element.text.rtf_data = rft_text
@@ -154,7 +159,9 @@ def CreateSlide(config, presentation, text, caption):
         # add text element
         text_element = copy.deepcopy(config["textElement7"])
         text_element.element.uuid.string = str(uuid.uuid4())
-        rft_text = config["textStyle7"] + my_text_upper[1].upper() + "}"
+        # Use appropriate text processing based on FORCE_UPPERCASE setting
+        text_to_use_second = my_text_upper if FORCE_UPPERCASE else my_text
+        rft_text = config["textStyle7"] + (text_to_use_second[1].upper() if FORCE_UPPERCASE else text_to_use_second[1]) + "}"
         text_element.element.text.rtf_data = rft_text
         slide.actions[0].slide.presentation.base_slide.elements.append(
             text_element)
